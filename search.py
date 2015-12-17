@@ -14,8 +14,14 @@ import urllib2
 #
 # print headers
 import requests
-response = requests.get('http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=regal&callback=myFunction')
-print type(response.content)
+
+company = raw_input(": ")
+prefix = 'http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input='
+suffix = '&callback=myFunction'
+
+url = prefix + company + suffix
+response = requests.get(url)
+print response.content
 
 
 #the regex statement owrking
