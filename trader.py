@@ -19,7 +19,7 @@ def getCurrentPriceFromTicker(ticker):
     if it is valid. if the ticker is invalid then None returned
 """
 def getHistoricalPriceFromRange(ticker, start, end):
-    stocks = Share(ticker)
+    stocks = Share(ticker.replace("." , "-"))
     return stocks.get_historical(start,end)
 
 
