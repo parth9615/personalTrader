@@ -17,10 +17,19 @@ def getCurrentPriceFromTicker(ticker):
 """
     This returns the edited array of results from the ticker
     if it is valid. if the ticker is invalid then None returned
+    form of the array
+    sorted(student_tuples, key=lambda student: student[2])
 """
 def getHistoricalPriceFromRange(ticker, start, end):
     stocks = Share(ticker.replace("." , "-"))
+<<<<<<< HEAD
     return stocks.get_historical(start,end)
+=======
+    answerList = []
+    for item in (stocks.get_historical(start,end)):
+        answerList.append( (item['Date'],item["Low"] , item["High"] , item["Close"],item["Open"]) )
+    pprint (answerList)
+>>>>>>> testing
 
 
 """
@@ -35,33 +44,59 @@ def searchForCompany(companyName):
     url = prefix + companyName + suffix
 
     response = requests.get(url)
-    result = re.search('{(.*)}', response.content)
+    resultList = removeBracesDictFromResults(response.content)
 
-    if result:
-        resultList = result.group().split('}')
-        resultList[0] = resultList[0].replace("{" , "")
-
+    if resultList:
         for item in resultList[:len(resultList) - 1]:
-            itemWithoutQuotes = item.replace("\"" , "")
-            formatString = itemWithoutQuotes.replace(",{" , "")
 
-            stocklist = formatString.split(",")
+            stocklist = removeDictWithColon(item)
             ticker = stocklist[0].split(":")[1]
             stockDictionary[ticker] = (getCurrentPriceFromTicker(ticker) , stocklist[1].split(":")[1] , stocklist[2].split(":")[1])
 
-
         for items in stockDictionary:
             print items , stockDictionary[items]
-    return stockDictionary
+        return stockDictionary
     else:
         return None
 
 
-print '1: getPrice \n2:searchForCompany'
-selector = raw_input('enter 1 or 2: ')
+"""
+    This list removes {} from a dictionary. it removes the individual
+    pieces from the string and returns it in the form of list.
+"""
+def removeBracesDictFromResults(string):
+    answer = re.search('{(.*)}', string)
+    if answer:
+        result = answer.group()
+        if result:
+            resultList = result.split('}')
+            resultList[0] = resultList[0].replace("{" , "")
+            return resultList
+    else:
+        return None
+
+
+""""
+    Given a list with colon sepeared items This method takes care of the extra {}() at the
+    ends and then returns a list of key values seperated by :
+"""
+def removeDictWithColon(item):
+        itemWithoutQuotes = item.replace("\"" , "")
+        formatString = itemWithoutQuotes.replace(",{" , "")
+        stocklist = formatString.split(",")
+        return stocklist
+
+
+print '1: getPrice \n2:searchForCompany \n3 Get historical price'
+selector = raw_input('enter 1, 2, or 3: ')
 if selector == '1':
     ticker = raw_input('enter ticker: ')
     print getCurrentPriceFromTicker(ticker)
 elif selector == '2':
     ticker = raw_input('companyName: ')
     searchForCompany(ticker)
+elif selector == '3':
+    ticker = raw_input('stok name: ')
+    # start = raw_input('start: ')
+    # end = raw_input('end: ')
+    getHistoricalPriceFromRange(ticker, '2015-12-01', '2015-12-17')
