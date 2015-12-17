@@ -26,7 +26,7 @@ def getHistoricalPriceFromRange(ticker, start, end):
     for item in (stocks.get_historical(start,end)):
         answerList.append( (item['Date'],item["Low"] , item["High"] , item["Close"],item["Open"]) )
     pprint (answerList)
->>>>>>> testing
+
 
 
 """
