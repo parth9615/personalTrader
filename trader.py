@@ -22,9 +22,6 @@ def getCurrentPriceFromTicker(ticker):
 """
 def getHistoricalPriceFromRange(ticker, start, end):
     stocks = Share(ticker.replace("." , "-"))
-<<<<<<< HEAD
-    return stocks.get_historical(start,end)
-=======
     answerList = []
     for item in (stocks.get_historical(start,end)):
         answerList.append( (item['Date'],item["Low"] , item["High"] , item["Close"],item["Open"]) )
