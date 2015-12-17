@@ -84,16 +84,27 @@ def removeDictWithColon(item):
         return stocklist
 
 
-print '1: getPrice \n2:searchForCompany \n3 Get historical price'
-selector = raw_input('enter 1, 2, or 3: ')
-if selector == '1':
-    ticker = raw_input('enter ticker: ')
-    print getCurrentPriceFromTicker(ticker)
-elif selector == '2':
-    ticker = raw_input('companyName: ')
-    searchForCompany(ticker)
-elif selector == '3':
-    ticker = raw_input('stok name: ')
-    # start = raw_input('start: ')
-    # end = raw_input('end: ')
-    getHistoricalPriceFromRange(ticker, '2015-12-01', '2015-12-17')
+
+while(True):
+    selector = raw_input('1: for stocks\n2: for company lookup\n3: for historical lookup\nquit: for quit ')
+    if selector == '1':
+        ticker = raw_input('enter ticker: ')
+        if getCurrentPriceFromTicker(ticker):
+            print getCurrentPriceFromTicker(ticker)
+        else:
+            print 'wront ticker try again'
+            continue
+    elif selector == '2':
+        ticker = raw_input('companyName: ')
+        if searchForCompany(ticker):
+            searchForCompany(ticker)
+        else:
+            print 'no company found'
+            continue
+    elif selector == '3':
+        ticker = raw_input('stok name: ')
+        start = raw_input('start: ')
+        end = raw_input('end: ')
+        getHistoricalPriceFromRange(ticker, start, end)
+    elif selector == 'quit':
+        break
