@@ -52,7 +52,7 @@ def searchForCompany(companyName):
 
         for items in stockDictionary:
             print items , stockDictionary[items]
-    return stockDictionary
+        return stockDictionary
     else:
         return None
 
