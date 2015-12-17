@@ -2,6 +2,7 @@ from yahoo_finance import Share
 from pprint import pprint
 import urllib2
 import requests
+import re
 
 """
     This method gets the current price from the ticker
@@ -9,7 +10,7 @@ import requests
     if the ticker is not valid then None is returned
 """
 def getCurrentPriceFromTicker(ticker):
-    stocks = Share(ticker)
+    stocks = Share(ticker.replace("." , "-"))
     return stocks.get_price()
 
 
@@ -23,18 +24,37 @@ def getHistoricalPriceFromRange(ticker, start, end):
 
 
 """
-    This method takes the companyName and fetches an array of
-    company resembling the input and displays it for the user to pick
+    This method takes the companyName and displays a list of companies
+    their stock symbol and their trading market and returns a dictionary of the following formatString
+    [stockSymbol] = (price , name of company, trading market)
 """
 def searchForCompany(companyName):
+    stockDictionary = {}
     prefix = 'http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input='
     suffix = '&callback=myFunction'
     url = prefix + companyName + suffix
 
     response = requests.get(url)
-    return response.content
+    result = re.search('{(.*)}', response.content)
+
+    if result:
+        resultList = result.group().split('}')
+        resultList[0] = resultList[0].replace("{" , "")
+
+        for item in resultList[:len(resultList) - 1]:
+            itemWithoutQuotes = item.replace("\"" , "")
+            formatString = itemWithoutQuotes.replace(",{" , "")
+
+            stocklist = formatString.split(",")
+            ticker = stocklist[0].split(":")[1]
+            stockDictionary[ticker] = (getCurrentPriceFromTicker(ticker) , stocklist[1].split(":")[1] , stocklist[2].split(":")[1])
 
 
+        for items in stockDictionary:
+            print items , stockDictionary[items]
+    return stockDictionary
+    else:
+        return None
 
 
 print '1: getPrice \n2:searchForCompany'
@@ -44,4 +64,4 @@ if selector == '1':
     print getCurrentPriceFromTicker(ticker)
 elif selector == '2':
     ticker = raw_input('companyName: ')
-    print searchForCompany(ticker)
+    searchForCompany(ticker)
