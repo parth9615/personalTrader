@@ -3,32 +3,45 @@ import os
 import sys
 import re
 
-
+"""
+    This method takes the portfolio and saves it to a text file called
+    info.txt to be read later when the program starts up again
+"""
 def saveToFile(portfolio):
+    removeFileIfExists('info.txt')
     f = open('info.txt', 'a')
     print portfolio
     for key in portfolio:
         string = key + ": " + str(portfolio[key]) + '\n'
         f.write(string)
 
-def removeFileIfExists():
-    path = os.getcwd() + "/info.txt"
+
+"""
+    This method removes the file specifed from the computer
+"""
+def removeFileIfExists(name):
+    path = os.getcwd() + "/" + name
     if os.path.exists(path):
         os.remove(path)
 
+
+""""
+    This method reads the file info.txt and saves all the portfolio information
+    for all the users in an instance of portfolio
+""""
 def readFromFile():
     f = open('read.txt' , 'rU')
     rawText = f.readlines()
     for x in rawText:
         y = x.split(":")
-        itemList = removeCharacters(y[1])
-        portfolio[y[0]] = itemList
-    for x in portfolio:
-        print x  , portfolio[x]
+        portfolio[y[0]] = removeCharactersAndGetValues(y[1])
 
 
-
-def removeCharacters(string):
+"""
+    This method takes a  string and remvoes all the formatting from it and
+    returns the stock infromation for the portfolio
+"""
+def removeCharactersAndGetValues(string):
     s1 = string.replace('[' , '')
     s2 = s1.replace(']' , '')
     s3 = s2.replace('(' , '')
@@ -42,7 +55,10 @@ def removeCharacters(string):
     return tupList
 
 
-
+""""
+    This method takes a a key and value and adds it
+    to the portfolio and formats it properly
+""""
 def addToPortfolio(key,value):
     if key in portfolio:
         portfolio[key].append(value)
