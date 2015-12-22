@@ -11,17 +11,13 @@ def saveToFile(portfolio):
     removeFileIfExists('info.txt')
     f = open('info.txt', 'a')
     for key in portfolio:
-        # value = portfolio[key][0]
-        # ticker = value[0] + " , "
-        # date = value[1] + " , "
-        # price = value[2] + " , "
-        # numbers = value[3]
-        # string = key +": " + ticker + date + price + numbers + '\n'
         string = getValueToWrite(key, portfolio[key][0])
         f.write(string)
 
 """
-
+    This method takes the key and value from the portfolio
+    and converts the value in a consitent format for the
+    the files to do i/o
 """
 def getValueToWrite(key, value):
     strList = key + ' : '
