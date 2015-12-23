@@ -10,8 +10,6 @@ import datetime
     info.txt to be read later when the program starts up again
 """
 def saveToFile(dict):
-    # removeFileIfExists('info.txt')
-    # f = open('info.txt', 'a')
     json.dump(dict, open("info.txt",'w'))
 
 
@@ -62,7 +60,9 @@ def enterNumber(string):
         return enterNumber(string)
 
 
-
+"""
+    Returns a valid calendar year date
+"""
 def getDate(string):
     answer = raw_input(string)
     dateList = answer.split("-")
@@ -77,14 +77,9 @@ def getDate(string):
 
 
 """
-    Main runner method.
+    This method adds work to the portfolio
 """
-def main():
-    portfolio = readFromFile()
-    if not portfolio:
-        portfolio = {}
-    for item in portfolio:
-        print item, portfolio[item]
+def portfolioManager(portfolio):
     while (True):
         name = raw_input("Enter Profile name: ")
         if name != 'quit':
@@ -95,7 +90,7 @@ def main():
                     price = enterNumber("Enter price: ")
                     numbers = enterNumber("Enter quantity: ")
                     date = getDate("Enter date: (YYYY-MM-DD): ")
-                    addToPortfolio(name , (ticker, date, price, numbers) , portfolio )
+                    addToPortfolio(name , (trader.getCompanyName(ticker) , ticker, date, price, numbers) , portfolio )
                 elif ticker != 'quit':
                     print 'wrong ticker try again'
                 else:
@@ -103,6 +98,50 @@ def main():
         else:
             saveToFile(portfolio)
             break
+
+
+
+"""
+    List the portfolios names and their options and stocks
+"""
+def showPortfolio(portfolio):
+    for item in portfolio:
+        print item
+        valueList = portfolio[item]
+        for values in valueList:
+            #trader.getCompanyName(ticker) , ticker, date, price, numbers
+            print '\t company Name:      ' , values[0]
+            print '\t\t stock Ticker:    ' , values[1]
+            print '\t\t Date Purchased:  ' , values[2]
+            print '\t\t Price Paid:      ' , values[3]
+            print '\t\t Number of Stocks ' , values[4]
+    print '\n\n'
+
+
+
+"""
+    This method returns the name of the company once the ticker is given
+"""
+"""
+    Main runner method.
+"""
+def main():
+
+    portfolio = readFromFile()
+    if not portfolio:
+        portfolio = {}
+
+    while(True):
+        option = raw_input('1: addToPortfolio\n2: showPortfolio\nEnter Choice:  ')
+        if option == '1':
+            portfolioManager(portfolio)
+        elif option == '2':
+            showPortfolio(portfolio)
+        elif option == 'quit':
+            break
+        else:
+            print '\n'
+
 
 
 

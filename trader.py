@@ -14,6 +14,20 @@ def getCurrentPriceFromTicker(ticker):
     return stocks.get_price()
 
 
+def getCompanyName(ticker):
+    suffix = 'http://chstocksearch.herokuapp.com/api/'
+    url = suffix + ticker
+    response = requests.get(url)
+    secondary = removeBracesDictFromResults('{(.*)}' , response.content)
+    answer = secondary[0].split(',')
+    companyName = answer[0].split(":")[1]
+    stockTicker = answer[1].split(":")[1]
+    if stockTicker[1:len(stockTicker)-1].lower() == ticker.lower():
+        return companyName[1:len(companyName) - 1]
+
+
+
+
 """
     This returns the edited array of results from the ticker
     if it is valid. if the ticker is invalid then None returned
@@ -37,11 +51,11 @@ def getHistoricalPriceFromRange(ticker, start, end):
 def searchForCompany(companyName):
     stockDictionary = {}
     prefix = 'http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input='
-    suffix = '&callback=myFunction'
+    suffix = '&callback=myFunctioQuote'
     url = prefix + companyName + suffix
 
     response = requests.get(url)
-    resultList = removeBracesDictFromResults(response.content)
+    resultList = removeBracesDictFromResults('{(.*)}' , response.content)
 
     if resultList:
         for item in resultList[:len(resultList) - 1]:
@@ -61,8 +75,8 @@ def searchForCompany(companyName):
     This list removes {} from a dictionary. it removes the individual
     pieces from the string and returns it in the form of list.
 """
-def removeBracesDictFromResults(string):
-    answer = re.search('{(.*)}', string)
+def removeBracesDictFromResults(regex , string):
+    answer = re.search(regex, string)
     if answer:
         result = answer.group()
         if result:
@@ -86,7 +100,7 @@ def removeDictWithColon(item):
 
 def main():
     while(True):
-        selector = raw_input('1: for stocks\n2: for company lookup\n3: for historical lookup\nquit: for quit ')
+        selector = raw_input('1: for stocks\n2: for company lookup\n3: for historical lookup\n4:for company name from ticker\nquit: for quit ')
         if selector == '1':
             ticker = raw_input('enter ticker: ')
             if getCurrentPriceFromTicker(ticker):
@@ -106,6 +120,8 @@ def main():
             start = raw_input('start: ')
             end = raw_input('end: ')
             getHistoricalPriceFromRange(ticker, start, end)
+        elif selector == '4':
+            getCompanyName(raw_input("ticker: "))
         elif selector == 'quit':
             break
 
