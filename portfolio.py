@@ -2,29 +2,19 @@ import trader
 import os
 import sys
 import re
+import json
+
 
 """
     This method takes the portfolio and saves it to a text file called
     info.txt to be read later when the program starts up again
 """
-def saveToFile(portfolio):
-    removeFileIfExists('info.txt')
-    f = open('info.txt', 'a')
-    for key in portfolio:
-        string = getValueToWrite(key, portfolio[key][0])
-        f.write(string)
+def saveToFile(dict):
+    # removeFileIfExists('info.txt')
+    # f = open('info.txt', 'a')
+    json.dump(dict, open("info.txt",'w'))
 
-"""
-    This method takes the key and value from the portfolio
-    and converts the value in a consitent format for the
-    the files to do i/o
-"""
-def getValueToWrite(key, value):
-    strList = key + ' : '
-    for i in range(len(value) - 1):
-        strList += ' ' + value[i] + ' , '
-    strList+= ' ' + value[i+1] + '\n'
-    return strList
+
 
 """
     This method removes the file specifed from the computer
@@ -42,37 +32,18 @@ def removeFileIfExists(name):
 def readFromFile():
     path = os.getcwd() + "/info.txt"
     if os.path.exists(path):
-        f = open('info.txt' , 'rU')
-        rawText = f.readlines()
-        for x in rawText:
-            y = x.split(":")
-            portfolio[y[0]] = removeCharactersAndGetValues(y[1])
-
-
-"""
-    This method takes a  string and remvoes all the formatting from it and
-    returns the stock infromation for the portfolio
-"""
-def removeCharactersAndGetValues(value):
-    string = value.replace(" " , "")
-    s1 = string.replace('[' , '')
-    s2 = s1.replace(']' , '')
-    s3 = s2.replace('(' , '')
-    s4 = s3.replace("\n" , "")
-    modified = s4.replace(')' , '')
-
-    x = modified.split(",")
-    tupList = []
-    for a in range(len(x)/4):
-        tupList.append(tuple(x[4*a: 4*(a+1)]))
-    return tupList
+        d2 = json.load(open("info.txt"))
+        if d2:
+            return d2
+        else:
+            return {}
 
 
 """
     This method takes a a key and value and adds it
     to the portfolio and formats it properly
 """
-def addToPortfolio(key,value):
+def addToPortfolio(key,value , portfolio):
     if key in portfolio:
         portfolio[key].append(value)
     else:
@@ -84,9 +55,12 @@ def addToPortfolio(key,value):
     Main runner method.
 """
 def main():
-    readFromFile()
-    for item in portfolio:
-        print item , portfolio[item]
+    portfolio = readFromFile()
+    if portfolio:
+        for item in portfolio:
+            print item , portfolio[item]
+    else:
+        portfolio = {}
     while (True):
         name = raw_input("Enter Profile name: ")
         if name != 'quit':
@@ -97,7 +71,7 @@ def main():
                     price = raw_input("Enter price: ")
                     numbers = raw_input("Enter quantity: ")
                     date = raw_input("Enter date: (YYYY-MM-DD): ")
-                    addToPortfolio(name , (ticker, date, price, numbers) )
+                    addToPortfolio(name , (ticker, date, price, numbers) , portfolio )
                 elif ticker != 'quit':
                     print 'wrong ticker try again'
                 else:
@@ -106,7 +80,7 @@ def main():
             saveToFile(portfolio)
             break
 
-portfolio = {}
+
 
 if __name__ == '__main__':
     main()
