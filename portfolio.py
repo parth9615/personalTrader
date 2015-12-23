@@ -3,7 +3,7 @@ import os
 import sys
 import re
 import json
-
+import datetime
 
 """
     This method takes the portfolio and saves it to a text file called
@@ -35,8 +35,7 @@ def readFromFile():
         d2 = json.load(open("info.txt"))
         if d2:
             return d2
-        else:
-            return {}
+
 
 
 """
@@ -51,16 +50,41 @@ def addToPortfolio(key,value , portfolio):
         ls.append(value)
         portfolio[key] = ls
 
+
+"""
+    This method makes sure that the result enterd is number
+"""
+def enterNumber(string):
+    answer = raw_input(string)
+    if answer.isdigit():
+        return answer
+    else:
+        return enterNumber(string)
+
+
+
+def getDate(string):
+    answer = raw_input(string)
+    dateList = answer.split("-")
+    if len(dateList) == 3:
+        try:
+            newDate = datetime.datetime(int(dateList[0]), int(dateList[1]), int(dateList[2]))
+            return  answer
+        except ValueError:
+            return getDate(string)
+    else:
+        getDate(string)
+
+
 """
     Main runner method.
 """
 def main():
     portfolio = readFromFile()
-    if portfolio:
-        for item in portfolio:
-            print item , portfolio[item]
-    else:
+    if not portfolio:
         portfolio = {}
+    for item in portfolio:
+        print item, portfolio[item]
     while (True):
         name = raw_input("Enter Profile name: ")
         if name != 'quit':
@@ -68,9 +92,9 @@ def main():
                 ticker = raw_input('enter ticker(quit to quit): ')
                 quote = trader.getCurrentPriceFromTicker(ticker)
                 if quote:
-                    price = raw_input("Enter price: ")
-                    numbers = raw_input("Enter quantity: ")
-                    date = raw_input("Enter date: (YYYY-MM-DD): ")
+                    price = enterNumber("Enter price: ")
+                    numbers = enterNumber("Enter quantity: ")
+                    date = getDate("Enter date: (YYYY-MM-DD): ")
                     addToPortfolio(name , (ticker, date, price, numbers) , portfolio )
                 elif ticker != 'quit':
                     print 'wrong ticker try again'
