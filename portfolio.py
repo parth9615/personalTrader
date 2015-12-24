@@ -5,6 +5,7 @@ import sys
 import re
 import json
 import datetime
+import time
 """
     This method takes the portfolio and saves it to a text file called
     info.txt to be read later when the program starts up again
@@ -140,7 +141,25 @@ def showPortfolio(portfolio):
             print colored('\t\t Price Paid total: ' , 'blue') , str(values[5]) + '\t' , colored('Current price total: ' , 'blue') , str(currentTotal) + '\t' , colored(float(values[5]) - currentTotal ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
 
 
+def searchForCompanies():
+    ticker = raw_input("Enter company: ")
+    trader.searchForCompany(ticker)
 
+
+"""
+    Showing the real time profit loss for each statement
+"""
+def showRealTime(portfolio):
+    while(True):
+        print colored('PRESS CONTROL C TO EXIT' , 'red' , attrs=['bold'])
+        for item in portfolio:
+            print colored(item, 'grey' )
+            valueList = portfolio[item]
+            for values in valueList:
+                currentTotal = float(trader.getCurrentPriceFromTicker(values[1])) * float(values[4])
+                print '\t' , values[0] , colored(float(values[5]) - currentTotal ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
+        time.sleep(10)
+        os.system('clear')
 
 """
     Main runner method.
@@ -152,11 +171,15 @@ def main():
         portfolio = {}
 
     while(True):
-        option = raw_input('1: addToPortfolio\n2: showPortfolio\nEnter Choice:  ')
+        option = raw_input('1: addToPortfolio\n2: showPortfolio\n3: Real Time profit loss\n4: Search for companies\nEnter Choice:  ')
         if option == '1':
             portfolioManager(portfolio)
         elif option == '2':
             showPortfolio(portfolio)
+        elif option == '3':
+            showRealTime(portfolio)
+        elif option == '4':
+            searchForCompanies()
         elif option == 'quit':
             break
         else:
