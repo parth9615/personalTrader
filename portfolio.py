@@ -1,3 +1,4 @@
+from termcolor import colored
 import trader
 import os
 import sys
@@ -5,6 +6,7 @@ import re
 import json
 import datetime
 
+#green on grey
 """
     This method takes the portfolio and saves it to a text file called
     info.txt to be read later when the program starts up again
@@ -54,8 +56,8 @@ def addToPortfolio(key,value , portfolio):
 """
 def enterNumber(string):
     answer = raw_input(string)
-    if answer.isdigit():
-        return answer
+    if answer.replace('.','').replace('-','').isdigit():
+        return float(answer)
     else:
         return enterNumber(string)
 
@@ -77,6 +79,26 @@ def getDate(string):
 
 
 """
+    Returns red for negative
+    green for positive
+"""
+def posOrNeg(first ,second):
+    if first - second < 0:
+        return 'red'
+    else:
+        return 'green'
+
+
+"""
+
+"""
+def posOrNegHighlight(first , second):
+    if first - second < 0:
+        return 'on_white'
+    else:
+        return 'on_grey'
+
+"""
     This method adds work to the portfolio
 """
 def portfolioManager(portfolio):
@@ -90,7 +112,7 @@ def portfolioManager(portfolio):
                     price = enterNumber("Enter price: ")
                     numbers = enterNumber("Enter quantity: ")
                     date = getDate("Enter date: (YYYY-MM-DD): ")
-                    addToPortfolio(name , (trader.getCompanyName(ticker) , ticker, date, price, numbers) , portfolio )
+                    addToPortfolio(name , (trader.getCompanyName(ticker) , ticker, date, price, numbers , numbers * price) , portfolio )
                 elif ticker != 'quit':
                     print 'wrong ticker try again'
                 else:
@@ -106,22 +128,24 @@ def portfolioManager(portfolio):
 """
 def showPortfolio(portfolio):
     for item in portfolio:
-        print item
+        print colored(item, 'grey' )
         valueList = portfolio[item]
         for values in valueList:
-            #trader.getCompanyName(ticker) , ticker, date, price, numbers
-            print '\t company Name:      ' , values[0]
-            print '\t\t stock Ticker:    ' , values[1]
-            print '\t\t Date Purchased:  ' , values[2]
-            print '\t\t Price Paid:      ' , values[3]
-            print '\t\t Number of Stocks ' , values[4]
-    print '\n\n'
+            current = float(trader.getCurrentPriceFromTicker(values[1]))
+            currentTotal = float(current) * float(values[4])
+            print colored('\t company Name:       ' , 'blue') , colored(values[0], 'green' , 'on_red')
+            print colored('\t\t stock Ticker:     ' , 'blue') , values[1]
+            print colored('\t\t Date Purchased:   ' , 'blue') , values[2]
+            print colored('\t\t Number of Stocks  ' , 'blue') , values[4]
+            # print colored('\t\t Price Paid per:   ' , 'blue') , colored(str(values[3]) + '\t', 'red') , colored('Current price:   ' , 'blue') , colored(str(current) + '\t', 'red'), colored( float(values[3]) - current ,posOrNeg(float(values[3]), current) , posOrNegHighlight(float(values[3]) , current), attrs=['bold'])
+            # print colored('\t\t Price Paid total: ' , 'blue') , colored(str(values[5]) + '\t', 'red') , colored('Current price total: ' , 'blue') , colored(str(currentTotal) + '\t', 'red') , colored(float(values[5]) ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
+            print colored('\t\t Price Paid per:   ' , 'blue') , str(values[3]) + '\t' , colored('Current price:   ' , 'blue') , str(current) + '\t' , colored( float(values[3]) - current ,posOrNeg(float(values[3]), current) , posOrNegHighlight(float(values[3]) , current), attrs=['bold'])
+            print colored('\t\t Price Paid total: ' , 'blue') , str(values[5]) + '\t' , colored('Current price total: ' , 'blue') , str(currentTotal) + '\t' , colored(float(values[5]) - currentTotal ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
+    # print '\n\n'
+            #, posOrNegHighlight(float(values[5])  , current), attrs=['bold'])
 
 
 
-"""
-    This method returns the name of the company once the ticker is given
-"""
 """
     Main runner method.
 """
