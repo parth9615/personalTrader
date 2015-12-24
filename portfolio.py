@@ -8,10 +8,10 @@ import datetime
 import time
 """
     This method takes the portfolio and saves it to a text file called
-    info.txt to be read later when the program starts up again
+    parth.txt to be read later when the program starts up again
 """
 def saveToFile(dict):
-    json.dump(dict, open("info.txt",'w'))
+    json.dump(dict, open("parth.txt",'w'))
 
 
 
@@ -25,13 +25,13 @@ def removeFileIfExists(name):
 
 
 """
-    This method reads the file info.txt and saves all the portfolio information
+    This method reads the file parth.txt and saves all the portfolio information
     for all the users in an instance of portfolio
 """
 def readFromFile():
-    path = os.getcwd() + "/info.txt"
+    path = os.getcwd() + "/parth.txt"
     if os.path.exists(path):
-        d2 = json.load(open("info.txt"))
+        d2 = json.load(open("parth.txt"))
         if d2:
             return d2
 
@@ -137,8 +137,8 @@ def showPortfolio(portfolio):
             print colored('\t\t stock Ticker:     ' , 'blue') , values[1]
             print colored('\t\t Date Purchased:   ' , 'blue') , values[2]
             print colored('\t\t Number of Stocks  ' , 'blue') , values[4]
-            print colored('\t\t Price Paid per:   ' , 'blue') , str(values[3]) + '\t' , colored('Current price:   ' , 'blue') , str(current) + '\t' , colored( float(values[3]) - current ,posOrNeg(float(values[3]), current) , posOrNegHighlight(float(values[3]) , current), attrs=['bold'])
-            print colored('\t\t Price Paid total: ' , 'blue') , str(values[5]) + '\t' , colored('Current price total: ' , 'blue') , str(currentTotal) + '\t' , colored(float(values[5]) - currentTotal ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
+            print colored('\t\t Price Paid per:   ' , 'blue') , str(values[3]) + '\t' , colored('Current price:   ' , 'blue') , str(current) + '\t' , colored( current - float(values[3])   ,posOrNeg(current , float(values[3])) , posOrNegHighlight(current , float(values[3]) ), attrs=['bold'])
+            print colored('\t\t Price Paid total: ' , 'blue') , str(values[5]) + '\t' , colored('Current price total: ' , 'blue') , str(currentTotal) + '\t' , colored(currentTotal - float(values[5])  ,posOrNeg(currentTotal , float(values[5]) ), posOrNegHighlight(currentTotal , float(values[5]) ), attrs=['bold'])
 
 
 def searchForCompanies():
