@@ -5,8 +5,6 @@ import sys
 import re
 import json
 import datetime
-
-#green on grey
 """
     This method takes the portfolio and saves it to a text file called
     info.txt to be read later when the program starts up again
@@ -90,7 +88,8 @@ def posOrNeg(first ,second):
 
 
 """
-
+    Return white highlight if negative
+    or return grey highlight if positive
 """
 def posOrNegHighlight(first , second):
     if first - second < 0:
@@ -137,12 +136,9 @@ def showPortfolio(portfolio):
             print colored('\t\t stock Ticker:     ' , 'blue') , values[1]
             print colored('\t\t Date Purchased:   ' , 'blue') , values[2]
             print colored('\t\t Number of Stocks  ' , 'blue') , values[4]
-            # print colored('\t\t Price Paid per:   ' , 'blue') , colored(str(values[3]) + '\t', 'red') , colored('Current price:   ' , 'blue') , colored(str(current) + '\t', 'red'), colored( float(values[3]) - current ,posOrNeg(float(values[3]), current) , posOrNegHighlight(float(values[3]) , current), attrs=['bold'])
-            # print colored('\t\t Price Paid total: ' , 'blue') , colored(str(values[5]) + '\t', 'red') , colored('Current price total: ' , 'blue') , colored(str(currentTotal) + '\t', 'red') , colored(float(values[5]) ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
             print colored('\t\t Price Paid per:   ' , 'blue') , str(values[3]) + '\t' , colored('Current price:   ' , 'blue') , str(current) + '\t' , colored( float(values[3]) - current ,posOrNeg(float(values[3]), current) , posOrNegHighlight(float(values[3]) , current), attrs=['bold'])
             print colored('\t\t Price Paid total: ' , 'blue') , str(values[5]) + '\t' , colored('Current price total: ' , 'blue') , str(currentTotal) + '\t' , colored(float(values[5]) - currentTotal ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
-    # print '\n\n'
-            #, posOrNegHighlight(float(values[5])  , current), attrs=['bold'])
+
 
 
 
