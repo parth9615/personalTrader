@@ -152,41 +152,55 @@ def searchForCompanies():
 def showRealTime(portfolio):
     while(True):
         print colored('PRESS CONTROL C TO EXIT' , 'red' , attrs=['bold'])
+
         for item in portfolio:
+            answer = 0
             print colored(item, 'grey' )
             valueList = portfolio[item]
             for values in valueList:
                 currentTotal = float(trader.getCurrentPriceFromTicker(values[1])) * float(values[4])
-                print '\t' , values[0] , colored(float(values[5]) - currentTotal ,posOrNeg(float(values[5]) , currentTotal), posOrNegHighlight(float(values[5]) , currentTotal), attrs=['bold'])
+                print '\t' , values[0] , colored(currentTotal - float(values[5])  ,posOrNeg(currentTotal , float(values[5]) ), posOrNegHighlight(currentTotal , float(values[5]) ), attrs=['bold'])
+                answer += (currentTotal - float(values[5]))
+            if answer > 0:
+                print colored('\t' + item, 'blue' ) , colored(answer  ,'green', 'on_grey', attrs=['bold'])
+            else:
+                print colored('\t' + item, 'blue' ) , colored(answer  ,'red', 'on_white', attrs=['bold'])
+
         time.sleep(10)
         os.system('clear')
 
 """
     Main runner method.
 """
-def main():
+def main(arg):
 
     portfolio = readFromFile()
     if not portfolio:
         portfolio = {}
-
-    while(True):
-        option = raw_input('1: addToPortfolio\n2: showPortfolio\n3: Real Time profit loss\n4: Search for companies\nEnter Choice:  ')
-        if option == '1':
-            portfolioManager(portfolio)
-        elif option == '2':
-            showPortfolio(portfolio)
-        elif option == '3':
-            showRealTime(portfolio)
-        elif option == '4':
-            searchForCompanies()
-        elif option == 'quit':
-            break
-        else:
-            print '\n'
+    if arg:
+        showPortfolio(portfolio)
+        print 'here;'
+    else:
+        while(True):
+            option = raw_input('1: addToPortfolio\n2: showPortfolio\n3: Real Time profit loss\n4: Search for companies\nEnter Choice:  ')
+            if option == '1':
+                portfolioManager(portfolio)
+            elif option == '2':
+                showPortfolio(portfolio)
+            elif option == '3':
+                showRealTime(portfolio)
+            elif option == '4':
+                searchForCompanies()
+            elif option == 'quit':
+                break
+            else:
+                print '\n'
 
 
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 1:
+        main(True)
+    else:
+        main(False)

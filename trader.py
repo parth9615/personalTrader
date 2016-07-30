@@ -37,9 +37,11 @@ def getCompanyName(ticker):
 def getHistoricalPriceFromRange(ticker, start, end):
     stocks = Share(ticker.replace("." , "-"))
     answerList = []
+    closeList = []
     for item in (stocks.get_historical(start,end)):
         answerList.append( (item['Date'],item["Low"] , item["High"] , item["Close"],item["Open"]) )
-    pprint (answerList)
+        closeList.append( float(item['Close']) )
+    pprint (closeList)
 
 
 
