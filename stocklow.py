@@ -1,60 +1,91 @@
-from yahoo_finance import Share
-import operator
+import csv
+import sys
+from collections import OrderedDict
+from operator import itemgetter
 from collections import Counter
-from collections import Counter
-from pprint import pprint
 
-stocks = [("AMZN",1997) , ("AAPL",1980) , ("GOOG",2004) , ("FB",2012) , ("NFLX",2002) , ("F",1978) , ("MSFT",1986) ]
-overallLow = []
-overallHigh = []
-ans = []
+def getYear():
+    return i[0].split("/")[-1]
+
+def getMonth():
+    return int(i[0].split("/")[0])
+
+def getDay():
+    return int(i[0].split("/")[1])
+
+month = {
+            1 : 'Jan',
+            2 : 'Feb',
+            3 : 'March',
+            4 : 'April',
+            5 : 'May',
+            6 : 'June',
+            7 : 'July',
+            8 : 'Aug',
+            9 : 'Sep',
+            10: 'Oct',
+            11 : 'Nov',
+            12 : 'Dec'
+    }
+stocks = [("amzn" , "amzn.csv") , ("goog","goog.csv") , ("apple" , "aapl.csv")]
 for i in stocks:
-    name = i[0]
-    stock = Share(i[0])
-    year = i[1]
-    print '------------------------' , i[0] , '--------------------------'
+    nameOfStocks = i[0]
+    nameOfFile = i[1]
+    file = open(nameOfFile)
+    fileReader = csv.reader(file)
+    listOfData = list(fileReader)
+    print '-----------------------------------' , nameOfStocks , '---------------------------------------------------'
 
-    lowMonth = []
-    highMonth = []
-    relation = []
-    for j in range(2016 - i[1]):
-        year += 1
-        a = stock.get_historical( str(year)+'-01-01', str(year)+'-12-31')
+    year = '16'
+    low = 1000000000000000000000.0;
+    high = -1.0;
+    lowMonth = ""
+    highMonth = ""
+    counter = 0
+    overallLow = []
+    overallHigh = []
+    year = listOfData[1][0].split("/")[-1]
+    lowDay = ""
+    highDay = ""
+    trends = []
+    lowAndHigh = []
+    for i in listOfData[1:]:
 
-        low = {}
-        high = {}
-
-        for i in a:
-            low[i['Date']] = i['Low']
-
-            high[i['Date']] = i['High']
-
-        sortedLow = sorted(low.items(), key=operator.itemgetter(1))
-        sortedHigh = sorted(high.items(), reverse=True, key=operator.itemgetter(1))
-
-        lowMonth.append(sortedLow[0][0][5:7])
-        overallLow.append(sortedLow[0][0][5:7])
-
-        highMonth.append(sortedHigh[0][0][5:7])
-        overallHigh.append(sortedHigh[0][0][5:7])
-        print 'low:: ' , sortedLow[0] , '::high:: ' , sortedHigh[0]
-        co = str(sortedLow[0][0][5:7]) , str(" : ") , str(sortedHigh[0][0][5:7])
-        relation.append(co)
-        ans.append(co)
+        if getYear()  == year:
+            currLow = float(i[2])
+            currHigh = float(i[3])
 
 
+            if currLow < low:
+                low = currLow
+                lowMonth = getMonth()
+                lowDay = getDay()
+            if currHigh > high:
+                high = currHigh
+                highDay = getDay()
+                highMonth = getMonth()
+        else:
+           
+            print getYear() , '[ Low: ' , month[lowMonth] , lowDay, " ]: " ,  '  [high: ' , month[highMonth], highDay , " ] : [" , low , high , ']'
+            lowToHigh = str(month[lowMonth]) , ":" , str(month[highMonth])
+            lowAndHigh.append((low , high))
+            trends.append(lowToHigh)
+            overallLow.append(month[lowMonth])
+            overallHigh.append(month[highMonth])
+            year = getYear()
+            low = 1000000000000000000000.0;
+            high = -1.0;
+
+    ans = Counter(overallLow)
+    print 'Low: ' , ans.most_common(4)
+    ans = Counter(overallHigh)
+    print 'High: ' , ans.most_common(4)
+    c = Counter(trends)
+    print c.most_common(3)
 
 
-    count = Counter(lowMonth)
-    print 'low::::::::::::::::::::', name, count.most_common()
-    count = Counter(highMonth)
-    print 'high:::::::::::::::::::', name, count.most_common()
-    count = Counter(relation)
-    print 'realations:::::::::::::' , name , count.most_common()
 
-count = Counter(overallLow)
-print 'low::::::::::::::::::::',count.most_common()
-count = Counter(overallHigh)
-print 'high:::::::::::::::::::',count.most_common()
-count = Counter(ans)
-print 'realations:::::::::::::' , name , count.most_common()
+            
+
+
+
